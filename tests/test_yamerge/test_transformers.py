@@ -2,8 +2,10 @@ import pathlib as pl
 from math import pi
 
 from yamerge.engine import TransformerSystem
-from yamerge.transformers import (AbsoluteMergeTransformerGenerator,
-                                  RelativeMergeTransformerGenerator)
+from yamerge.transformers import (
+    AbsoluteMergeTransformerGenerator,
+    RelativeMergeTransformerGenerator,
+)
 from yamerge.yaml_access import load_yaml_file
 
 DIR_DATA = pl.Path("tests_data")

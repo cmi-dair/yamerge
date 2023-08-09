@@ -5,8 +5,13 @@ from typing import Generator, List, Optional, Union
 
 from yamerge.engine import Transformer, TransformerGenerator, TransformerSystem
 
-from ..core import (YamlBackRef, YamlData, iter_yaml_data_bfs,
-                    yaml_backref_depth, yaml_backref_indices)
+from ..core import (
+    YamlBackRef,
+    YamlData,
+    iter_yaml_data_bfs,
+    yaml_backref_depth,
+    yaml_backref_indices,
+)
 from ..yaml_access import load_yaml_file
 
 

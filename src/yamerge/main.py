@@ -1,8 +1,10 @@
 import argparse
 
 from yamerge.engine import TransformerSystem
-from yamerge.transformers import (AbsoluteMergeTransformerGenerator,
-                                  RelativeMergeTransformerGenerator)
+from yamerge.transformers import (
+    AbsoluteMergeTransformerGenerator,
+    RelativeMergeTransformerGenerator,
+)
 from yamerge.yaml_access import load_yaml_file, save_yaml_file, save_yaml_str
 
 
