@@ -57,7 +57,7 @@ def iter_yaml_backref(
         br = br.parent
 
 
-def yaml_backref_indices(br: YamlBackRef) -> List[YamlIndex]:
+def yaml_backref_indices(br: YamlBackRef) -> List[Union[YamlIndex, None]]:
     """
     Find all (parent) indices of a backref
     :param br: Backref

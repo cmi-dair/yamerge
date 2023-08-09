@@ -29,7 +29,7 @@ class RenameTagTransformerGenerator(TransformerGenerator[YamlData]):
 
     def match(
         self, obj: YamlData, sys: TransformerSystem
-    ) -> Generator[YamlData, None, None]:
+    ) -> Generator[Transformer[YamlData], None, None]:
         for br in iter_yaml_data_bfs(obj):
             if isinstance(br.element, dict) and self.rename_from in br.element:
                 yield RenameTagTransformer(self, br.element)

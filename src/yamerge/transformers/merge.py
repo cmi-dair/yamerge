@@ -1,7 +1,7 @@
 import pathlib as pl
 from abc import ABC, abstractmethod
 from os import PathLike
-from typing import Generator, List, Optional, Union
+from typing import Generator, List, Optional, Union, Any
 
 from yamerge.engine import Transformer, TransformerGenerator, TransformerSystem
 
@@ -62,6 +62,8 @@ class MergeTransformer(Transformer[YamlData], ABC):
         return self.generator.base_precedence + self.depth
 
     def apply(self, obj: YamlData, sys: TransformerSystem) -> YamlData:
+        assert isinstance(self.br.element, dict)
+
         merge_filename = self.br.element[self.generator.merge_tag_name]
         del self.br.element[self.generator.merge_tag_name]
 
@@ -93,7 +95,7 @@ class MergeTransformerGenerator(TransformerGenerator[YamlData], ABC):
         max_apply: int = 1000,
     ):
         self.merge_tag_name = merge_tag_name
-        self.paths = ["."] if paths is None else paths
+        self.paths: List[Union[str, PathLike]] = ["."] if paths is None else paths
         self.base_precedence = base_precedence
         self.max_apply = max_apply
         self.num_apply = 0
@@ -122,7 +124,9 @@ class MergeTransformerGenerator(TransformerGenerator[YamlData], ABC):
 
 class AbsoluteMergeTransformer(MergeTransformer):
     def _merge(self, a: YamlData, b: YamlData, a_br: Optional[YamlBackRef] = None):
-        a_br: YamlBackRef = YamlBackRef.root(a) if a_br is None else a_br
+        assert isinstance(b, dict)
+
+        a_br = YamlBackRef.root(a) if a_br is None else a_br
 
         parent_keys = yaml_backref_indices(a_br)
 
@@ -136,6 +140,10 @@ class AbsoluteMergeTransformer(MergeTransformer):
                 raise Exception("Absolute-merge: Graph mismatch")
 
             b_node = b_node[key]
+
+        assert isinstance(a_br.element, dict)
+        assert isinstance(a, dict)
+        assert isinstance(b, dict)
 
         _merge_dicts(a_br.element, b_node)
 
@@ -153,7 +161,12 @@ class AbsoluteMergeTransformerGenerator(MergeTransformerGenerator):
 class RelativeMergeTransformer(MergeTransformer):
     # pylint: disable=too-few-public-methods
     def _merge(self, a: YamlData, b: YamlData, a_br: Optional[YamlBackRef] = None):
-        a_br: YamlBackRef = YamlBackRef.root(a) if a_br is None else a_br
+        a_br = YamlBackRef.root(a) if a_br is None else a_br
+
+        assert isinstance(a_br.element, dict)
+        assert isinstance(a, dict)
+        assert isinstance(b, dict)
+
         _merge_dicts(a_br.element, b)
         return a
 
