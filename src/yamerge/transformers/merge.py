@@ -1,10 +1,12 @@
 import pathlib as pl
 from abc import ABC, abstractmethod
 from os import PathLike
-from typing import Optional, List, Generator, Union
+from typing import Generator, List, Optional, Union
 
 from yamerge.engine import Transformer, TransformerGenerator, TransformerSystem
-from ..core import YamlData, yaml_backref_indices, yaml_backref_depth, iter_yaml_data_bfs, YamlBackRef
+
+from ..core import (YamlBackRef, YamlData, iter_yaml_data_bfs,
+                    yaml_backref_depth, yaml_backref_indices)
 from ..yaml_access import load_yaml_file
 
 
@@ -29,7 +31,9 @@ def _merge_dicts(a: dict, b: dict):
     return a
 
 
-def _find_file_in_paths(file: Union[str, PathLike], paths: List[Union[str, PathLike]]) -> Optional[PathLike]:
+def _find_file_in_paths(
+    file: Union[str, PathLike], paths: List[Union[str, PathLike]]
+) -> Optional[PathLike]:
     """
     Return the first existing file path from multiple possible locations.
     :param file: File
@@ -44,7 +48,7 @@ def _find_file_in_paths(file: Union[str, PathLike], paths: List[Union[str, PathL
 
 
 class MergeTransformer(Transformer[YamlData], ABC):
-    def __init__(self, generator: 'MergeTransformerGenerator', br: YamlBackRef):
+    def __init__(self, generator: "MergeTransformerGenerator", br: YamlBackRef):
         self.generator = generator
         self.br = br
         self.depth = yaml_backref_depth(br)
@@ -60,7 +64,7 @@ class MergeTransformer(Transformer[YamlData], ABC):
 
         merge_filepath = _find_file_in_paths(merge_filename, self.generator.paths)
         if merge_filepath is None:
-            raise Exception(f'File not found: {merge_filename}')
+            raise Exception(f"File not found: {merge_filename}")
 
         merge_yaml = load_yaml_file(merge_filepath)
         merge_yaml = sys.apply(merge_yaml)  # resolve dependency yaml first
@@ -77,31 +81,37 @@ class MergeTransformer(Transformer[YamlData], ABC):
 class MergeTransformerGenerator(TransformerGenerator[YamlData], ABC):
     # pylint: disable=too-few-public-methods
     def __init__(
-            self,
-            merge_tag_name: str,
-            paths: Optional[List[Union[str, PathLike]]] = None,
-            base_precedence: int = 1000,
-            max_apply: int = 1000
+        self,
+        merge_tag_name: str,
+        paths: Optional[List[Union[str, PathLike]]] = None,
+        base_precedence: int = 1000,
+        max_apply: int = 1000,
     ):
         self.merge_tag_name = merge_tag_name
-        self.paths = ['.'] if paths is None else paths
+        self.paths = ["."] if paths is None else paths
         self.base_precedence = base_precedence
         self.max_apply = max_apply
         self.num_apply = 0
 
-    def match(self, obj: YamlData, sys: TransformerSystem) -> Generator[MergeTransformer, None, None]:
+    def match(
+        self, obj: YamlData, sys: TransformerSystem
+    ) -> Generator[MergeTransformer, None, None]:
         for br in iter_yaml_data_bfs(obj):
-            if isinstance(br.element, dict) and self.merge_tag_name in br.element.keys():
+            if (
+                isinstance(br.element, dict)
+                and self.merge_tag_name in br.element.keys()
+            ):
                 if self.num_apply > self.max_apply:
-                    raise Exception('Maximum number of merges reached. (Infinite recursion?)')
+                    raise Exception(
+                        "Maximum number of merges reached. (Infinite recursion?)"
+                    )
                 self.num_apply += 1
-                yield self._make_transformer(
-                    generator=self,
-                    br=br
-                )
+                yield self._make_transformer(generator=self, br=br)
 
     @abstractmethod
-    def _make_transformer(self, generator: 'MergeTransformerGenerator', br: YamlBackRef) -> MergeTransformer:
+    def _make_transformer(
+        self, generator: "MergeTransformerGenerator", br: YamlBackRef
+    ) -> MergeTransformer:
         pass
 
 
@@ -115,10 +125,10 @@ class AbsoluteMergeTransformer(MergeTransformer):
         b_node = b
         for key in parent_keys:
             if not isinstance(key, str):
-                raise Exception('Absolute-merge does not work nested in lists')
+                raise Exception("Absolute-merge does not work nested in lists")
 
             if key not in b_node:
-                raise Exception('Absolute-merge: Graph mismatch')
+                raise Exception("Absolute-merge: Graph mismatch")
 
             b_node = b_node[key]
 
@@ -129,11 +139,10 @@ class AbsoluteMergeTransformer(MergeTransformer):
 
 class AbsoluteMergeTransformerGenerator(MergeTransformerGenerator):
     # pylint: disable=too-few-public-methods
-    def _make_transformer(self, generator: MergeTransformerGenerator, br: YamlBackRef) -> MergeTransformer:
-        return AbsoluteMergeTransformer(
-            generator=generator,
-            br=br
-        )
+    def _make_transformer(
+        self, generator: MergeTransformerGenerator, br: YamlBackRef
+    ) -> MergeTransformer:
+        return AbsoluteMergeTransformer(generator=generator, br=br)
 
 
 class RelativeMergeTransformer(MergeTransformer):
@@ -146,8 +155,7 @@ class RelativeMergeTransformer(MergeTransformer):
 
 class RelativeMergeTransformerGenerator(MergeTransformerGenerator):
     # pylint: disable=too-few-public-methods
-    def _make_transformer(self, generator: MergeTransformerGenerator, br: YamlBackRef) -> MergeTransformer:
-        return RelativeMergeTransformer(
-            generator=generator,
-            br=br
-        )
+    def _make_transformer(
+        self, generator: MergeTransformerGenerator, br: YamlBackRef
+    ) -> MergeTransformer:
+        return RelativeMergeTransformer(generator=generator, br=br)

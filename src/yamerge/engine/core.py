@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic, Generator, Iterable
+from typing import Generator, Generic, Iterable, TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class Transformer(ABC, Generic[T]):
@@ -14,7 +14,7 @@ class Transformer(ABC, Generic[T]):
         return 0
 
     @abstractmethod
-    def apply(self, obj: T, sys: 'TransformerSystem') -> T:
+    def apply(self, obj: T, sys: "TransformerSystem") -> T:
         pass
 
 
@@ -25,7 +25,9 @@ class TransformerGenerator(ABC, Generic[T]):
     """
 
     @abstractmethod
-    def match(self, obj: T, sys: 'TransformerSystem') -> Generator[Transformer[T], None, None]:
+    def match(
+        self, obj: T, sys: "TransformerSystem"
+    ) -> Generator[Transformer[T], None, None]:
         pass
 
 
