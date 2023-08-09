@@ -21,6 +21,16 @@
             <input type="search" placeholder="Search..." role="searchbox" aria-label="search"
                    pattern=".+" required>
 
+            <h2>Contents</h2>
+            <ul>
+  <li><a href="#yamerge-yaml-file-preprocessor"><code>yamerge</code>: YAML file preprocessor</a>
+  <ul>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+  </ul></li>
+</ul>
+
 
             <h2>Submodules</h2>
             <ul>
@@ -45,10 +55,163 @@
                     <h1 class="modulename">
 yamerge    </h1>
 
-                
-                
-                
-                
+                        <div class="docstring"><h1 id="yamerge-yaml-file-preprocessor"><code><a href="">yamerge</a></code>: YAML file preprocessor</h1>
+
+<p><a href="https://github.com/cmi-dair/yamerge/actions/workflows/test.yaml?query=branch%3Amain"><img src="https://github.com/cmi-dair/yamerge/actions/workflows/test.yaml/badge.svg?branch=main" alt="Build" /></a>
+<a href="https://codecov.io/gh/cmi-dair/yamerge"><img src="https://codecov.io/gh/cmi-dair/yamerge/branch/main/graph/badge.svg?token=22HWWFWPW5" alt="codecov" /></a>
+<a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code style: black" /></a>
+<a href="https://github.com/cmi-dair/yamerge/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-L--GPL-blue.svg" alt="L-GPL License" /></a>
+<a href="https://cmi-dair.github.io/yamerge"><img src="https://img.shields.io/badge/api-docs-blue" alt="pages" /></a></p>
+
+<h2 id="features">Features</h2>
+
+<ul>
+<li>A few</li>
+<li>Cool</li>
+<li>Things</li>
+</ul>
+
+<h2 id="installation">Installation</h2>
+
+<p>Get the newest development version via:</p>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>git+https://github.com/cmi-dair/yamerge
+</code></pre>
+</div>
+
+<h2 id="usage">Usage</h2>
+
+<pre><code>usage: main.py [-h] [-o OUTPUT] [-p PATHS] [-d] input
+
+Preprocessor for YAML files. Merge data from other YAML files via tags:
+`MERGE: file/path.yml` (absolute / same YAML structure) `MERGE-SNIPPET:
+path/to/snippet.yml` (relative / merge full YAML).
+
+positional arguments:
+  input                 YAML input filepath
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -o OUTPUT, --output OUTPUT
+                        YAML output filepath (If this is not specified result
+                        will be printed to console)
+  -p PATHS, --paths PATHS
+                        Source directories for yaml files. Default: Working
+                        directory (Seperate multiple with `|`. E.g.:
+                        `/some/folder|../another/one`)
+  -d, --debug           Print debug information
+</code></pre>
+
+<h3 id="absolute-merge-merge">Absolute merge (<code>MERGE</code>)</h3>
+
+<p>Merge specific branch from other <em>completely defined</em> YAML file into input YAML.</p>
+
+<ul>
+<li>Both files have to have the same structure</li>
+<li>Will only merge all child-nodes from where the <code>MERGE</code> tag is nested </li>
+<li>Caveat: Does not work nested within lists (as there is no stable key/index in lists) <br/> 
+&rarr; <em>Relative merge</em> is a list-compatible alternative</li>
+</ul>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># file_1.yml</span>
+
+<span class="nt">foo</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">MERGE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">file_2.yml</span>
+<span class="w">  </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
+<span class="w">  </span><span class="nt">x</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">baz</span>
+</code></pre>
+</div>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># file_2.yml</span>
+
+<span class="nt">foo</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999</span>
+<span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span>
+<span class="w">  </span><span class="nt">x</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+
+<span class="nt">this_will_not_be_merged</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">because MERGE was nested under &#39;foo&#39;</span>
+</code></pre>
+</div>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># yamerge file_1.yml</span>
+
+<span class="nt">foo</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span><span class="w">   </span><span class="c1"># &lt;- this was already defined in &#39;file_1.yml&#39; </span>
+<span class="w">  </span><span class="nt">c</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">42</span><span class="w">  </span><span class="c1"># &lt;- this was merged from &#39;file_2.yml&#39;</span>
+<span class="w">  </span><span class="nt">x</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">y</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">baz</span>
+<span class="w">    </span><span class="nt">z</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+</code></pre>
+</div>
+
+<h3 id="relative-merge-merge-snippet">Relative merge (<code>MERGE-SNIPPET</code>)</h3>
+
+<p>Merge specific branch from a config ‘snippet’ file into input YAML.</p>
+
+<ul>
+<li>Merge complete YAML file at the location of the <code>MERGE-SNIPPET</code> tag.</li>
+<li>Works within lists.</li>
+</ul>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># some_file.yml</span>
+
+<span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">step-1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">step-2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">MERGE-SNIPPET</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">some_snippet.yml</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">step-3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hi</span>
+</code></pre>
+</div>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># some_snippet.yml</span>
+
+<span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.61803398875</span>
+<span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.14159265359</span>
+</code></pre>
+</div>
+
+<div class="pdoc-code codehilite">
+<pre><span></span><code><span class="c1"># yamerge some_file.yml</span>
+
+<span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">step-1</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">step-2</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3.14159265359</span><span class="w">  </span><span class="c1"># &lt;- this got merged</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">step-3</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hello</span>
+<span class="w">    </span><span class="nt">b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hi</span>
+</code></pre>
+</div>
+</div>
+
+                        <input id="mod-yamerge-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+
+                        <label class="view-source-button" for="mod-yamerge-view-source"><span>View Source</span></label>
+
+                        <div class="pdoc-code codehilite"><pre><span></span><span id="L-1"><a href="#L-1"><span class="linenos">1</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span><span id="L-2"><a href="#L-2"><span class="linenos">2</span></a><span class="sd">.. include:: ../../README.md</span>
+</span><span id="L-3"><a href="#L-3"><span class="linenos">3</span></a><span class="sd">&quot;&quot;&quot;</span>
+</span></pre></div>
+
+
             </section>
     </main>
 <script>
