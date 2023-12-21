@@ -50,8 +50,8 @@ optional arguments:
 Merge specific branch from other *completely defined* YAML file into input YAML.
 
 - Both files have to have the same structure
-- Will only merge all child-nodes from where the `MERGE` tag is nested 
-- Caveat: Does not work nested within lists (as there is no stable key/index in lists) <br/> 
+- Will only merge all child-nodes from where the `MERGE` tag is nested
+- Caveat: Does not work nested within lists (as there is no stable key/index in lists) <br/>
   &rarr; *Relative merge* is a list-compatible alternative
 
 
@@ -83,7 +83,7 @@ this_will_not_be_merged: because MERGE was nested under 'foo'
 
 foo:
   a: 1
-  b: 7   # <- this was already defined in 'file_1.yml' 
+  b: 7   # <- this was already defined in 'file_1.yml'
   c: 42  # <- this was merged from 'file_2.yml'
   x:
     y: baz
