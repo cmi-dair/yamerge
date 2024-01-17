@@ -1,10 +1,10 @@
 # `yamerge`: YAML file preprocessor
 
-[![Build](https://github.com/cmi-dair/yamerge/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/cmi-dair/yamerge/actions/workflows/test.yaml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/cmi-dair/yamerge/branch/main/graph/badge.svg?token=22HWWFWPW5)](https://codecov.io/gh/cmi-dair/yamerge)
+[![Build](https://github.com/childmindresearch/yamerge/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/childmindresearch/yamerge/actions/workflows/test.yaml?query=branch%3Amain)
+[![codecov](https://codecov.io/gh/childmindresearch/yamerge/branch/main/graph/badge.svg?token=22HWWFWPW5)](https://codecov.io/gh/childmindresearch/yamerge)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![L-GPL License](https://img.shields.io/badge/license-L--GPL-blue.svg)](https://github.com/cmi-dair/yamerge/blob/main/LICENSE)
-[![pages](https://img.shields.io/badge/api-docs-blue)](https://cmi-dair.github.io/yamerge)
+[![L-GPL License](https://img.shields.io/badge/license-L--GPL-blue.svg)](https://github.com/childmindresearch/yamerge/blob/main/LICENSE)
+[![pages](https://img.shields.io/badge/api-docs-blue)](https://childmindresearch.github.io/yamerge)
 
 ## Features
 
@@ -17,7 +17,7 @@
 Get the newest development version via:
 
 ```sh
-pip install git+https://github.com/cmi-dair/yamerge
+pip install git+https://github.com/childmindresearch/yamerge
 ```
 
 ## Usage
